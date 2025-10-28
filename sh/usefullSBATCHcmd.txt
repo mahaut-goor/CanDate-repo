@@ -1,0 +1,12 @@
+sacctmgr list clusters # Use 'sacctmgr list clusters' to see available clusters.
+
+sinfo -M cm4 -p cm4_tiny
+
+salloc --clusters=biohpc_gen --partition=biohpc_gen_inter --time=02:00:00
+
+sacct -M all -X -u re98gan
+
+squeue --clusters=cm4 --partition=cm4_tiny -u $USER
+squeue --clusters=cm4,inter -u $USER
+
+scancel --clusters=cm4 7919004,7919002
