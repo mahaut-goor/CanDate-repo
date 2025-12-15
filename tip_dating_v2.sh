@@ -13,6 +13,7 @@ logcombiner=/dss/dsshome1/09/re98gan/ANALYSIS/envs/beast_env/beast/bin/logcombin
 input=$1
 dir=$2
 prefix=$3
+type=$4
 
 ############################################# IQTREE - to generate starting tree #####################################################
 # Create output directory if it doesn't exist
@@ -43,39 +44,47 @@ mkdir -p "$chains"
 # Run 10 independent MCMC chains with different random seeds
 # $beast -validate/ $input
 
-for i in {1..3}; do
+for i in {1..4}; do
     seed=$((30 - i))
-    $beast -threads 32 -seed "$seed" -prefix "$chains/chain${i}_" "$input" &
+
+    if [ "$type" == "resume" ]; then
+        $beast -threads 64 -prefix "$chains/chain${i}_" -resume "$input" &
+    elif [ "$type" == "new" ]; then
+        $beast -threads 64 -prefix "$chains/chain${i}_" "$input" &
+    else
+        echo "❌ Error: unknown type '$type'. Expected 'resume' or 'new'."
+        exit 1
+    fi
 done
 wait
 
 ############################################# COMBINE LOGS #############################################
-combined_log_output="$dir/"$prefix"_combined_log.log"
+# combined_log_output="$dir/"$prefix"_combined_log.log"
 
-logs=()
-for i in {1..3}; do
-    logs+=( -log "$chains/chain${i}"*".log" )
-done
-$logcombiner -b 10 "${logs[@]}" -o "$combined_log_output"
+# logs=()
+# for i in {1..4}; do
+#     logs+=( -log "$chains/chain${i}"*".log" )
+# done
+# $logcombiner -b 10 "${logs[@]}" -o "$combined_log_output"
 
-# ################## OPTIONS ##################
-# # -b 10 indicates to burn the first 10% of the samples
-# # Check the combined log file for convergence and effective sample sizes (ESS) using Tracer
-# # Open Tracer and load the combined_log.log file to assess convergence and ESS values
+# # ################## OPTIONS ##################
+# # # -b 10 indicates to burn the first 10% of the samples
+# # # Check the combined log file for convergence and effective sample sizes (ESS) using Tracer
+# # # Open Tracer and load the combined_log.log file to assess convergence and ESS values
 
-# ############################################# COMBINE TREES #############################################
-combined_trees_output="$dir/"$prefix"_combined_trees.trees"
+# # ############################################# COMBINE TREES #############################################
+# combined_trees_output="$dir/"$prefix"_combined_trees.trees"
 
-trees=()
-for i in {1..3}; do
-    trees+=( -log "$chains/chain${i}"*".trees" )
-done
-$logcombiner -b 10 "${trees[@]}" -o "$combined_trees_output"
+# trees=()
+# for i in {1..4}; do
+#     trees+=( -log "$chains/chain${i}"*".trees" )
+# done
+# $logcombiner -b 10 "${trees[@]}" -o "$combined_trees_output"
 
-# ############################################# ANNOTATE TREE #############################################
-combined_tree_output="$dir/"$prefix"_combined_tree.tree"
+# # ############################################# ANNOTATE TREE #############################################
+# combined_tree_output="$dir/"$prefix"_combined_tree.tree"
 
-$treeannotator \
-    -burnin 10 \
-    -height median "$combined_trees_output" "$combined_tree_output"
+# $treeannotator \
+#     -burnin 10 \
+#     -height median "$combined_trees_output" "$combined_tree_output"
 

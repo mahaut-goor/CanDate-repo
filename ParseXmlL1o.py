@@ -17,9 +17,11 @@ def parse_xml_tip_dates(infile, outfile, old_sample_ID, new_sample_ID):
     new_sample_ID = new_sample_ID.strip()
     # print(f'New sample ID: {new_sample_ID}')
 
-    old_sample_tip_ID = '_'.join(old_sample_ID.split('_')[:-1])
+    parts = old_sample_ID.split('_')
+    old_sample_tip_ID = parts[0] + '_0' if len(parts) == 1 else '_'.join(parts[:-1])
     # print(f'Old sample tip ID: {old_sample_tip_ID}')
-    new_sample_tip_ID = '_'.join(new_sample_ID.split('_')[:-1])
+    parts = new_sample_ID.split('_')
+    new_sample_tip_ID = parts[0] + '_0' if len(parts) == 1 else '_'.join(parts[:-1])
     # print(f'New sample tip ID: {new_sample_tip_ID}')
 
     with open(infile, 'r') as file:

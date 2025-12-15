@@ -18,7 +18,6 @@ python /dss/dsshome1/09/re98gan/ANALYSIS/py_scripts/check_tip_dating_inputs.py "
 # check the labels (sample names) correspond to the csv file
 # check if labels are in good format (no spaces, special characters etc)
 
-#########################################
 # check csv file
 # check if it has two columns: sample names and tip dates
 # check if sample names correspond to fasta file
@@ -26,6 +25,21 @@ python /dss/dsshome1/09/re98gan/ANALYSIS/py_scripts/check_tip_dating_inputs.py "
 
 #########################################
 # check output directory
+
+#########################################
+# run a first ml tree with model finder to select the best model
+
+#########################################
+# create xml files for tip dating analyses
+
+#########################################
+# or use bmodel test to find molecular rates
+
+#########################################
+# run a bayesien tree without tip dating to estimate molecular rates
+
+#########################################
+# create xml files for tip dating analyses
 
 #########################################
 # what analysis

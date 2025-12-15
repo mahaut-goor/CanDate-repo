@@ -4,9 +4,9 @@
 #SBATCH --error=/dss/dsshome1/09/re98gan/ANALYSIS/err/extractTD_%j.err
 #SBATCH --time=02:00:00
 #SBATCH --get-user-env
-#SBATCH --clusters=cm4
-#SBATCH --partition=cm4_tiny
-#SBATCH --cpus-per-task=32
+#SBATCH --clusters=serial
+#SBATCH --partition=serial_std
+#SBATCH --cpus-per-task=16
 #SBATCH --export=NONE
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=M.Goor@campus.lmu.de
@@ -14,16 +14,17 @@
 # Usage: ./run_extract_tip_dates.sh <base_directory>
 
 # base_dir="${1:-.}"  # Default to current directory if none provided
-base_dir=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/tests/testing20samplescalC14_1/leave-one-out_3
+base_dir=/dss/lxclscratch/09/re98gan/mt_dogs_to_date/Palaeolithic_mtDNA/xmls
 script_path="/dss/dsshome1/09/re98gan/ANALYSIS/py_scripts/extractTipDate.py"
 
-echo "Searching for *_combined_log.log files in: $base_dir"
+echo "Searching for *.log files in: $base_dir"
 
 # Loop through all *_combined_log.log files recursively
-find "$base_dir" -type f -name "*_combined_log.log" | while read -r log; do
+# find "$base_dir" -type f -name "COMBINED*.log" | while read -r log; do
+find "$base_dir" -type f -name "COMBINE_VF2*.log" | while read -r log; do
     echo "Processing: $log"
     output_dir=$(dirname "$log")
-    prefix=$(basename "$log" _combined_log.log)
+    prefix=$(basename "$log" .log)
     output_csv="$output_dir/extracted_tip_dates_${prefix}.csv"
 
     python "$script_path" "$log" "$output_csv"
