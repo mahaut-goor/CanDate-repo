@@ -21,6 +21,6 @@ for folder in $dir"/strictClock_dating_"*; do
     echo "Input tree path: $input_tree"
 
     echo -e "\n" >> patristic_distance_summary.csv
-    Rscript --vanilla /dss/dsshome1/09/re98gan/ANALYSIS/r_scripts/patristic_distance.r $input_tree $sampleName >> patristic_distance_summary.csv
+    Rscript --vanilla /dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/stats.r $input_tree $sampleName >> patristic_distance_summary.csv
 
 done
