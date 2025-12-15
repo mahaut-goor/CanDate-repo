@@ -1,27 +1,49 @@
-Here are all the scripts and data used for the estimation of molucular age.
+# Molecular Age Estimation Pipeline
 
-############################## BAM2FASTA
-1) if you have .bam files, you should first extract the mt reads and create the consensus
-==> Use the script /dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/bam2MTfasta.sh
+This directory contains all scripts and data used for the estimation of molecular age from mitochondrial sequences.
 
-Optionnaly, you can also extract some statistics such as coverage, number of reads & depths of coverage using /dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/getStatsMT.sh
+## 1️⃣ BAM → FASTA Conversion
 
-############################## ALIGN + TRIMM
-2) The first step for tip dating is to align the sample consensus to the database of radiocarbon dated samples (which is already aligned) 
-==> Use /dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/runMafftTrimal.sh
+If you have .bam files, start by extracting mitochondrial (mt) reads and generating consensus sequences.
 
-############################## CREATE XML
-3) After aligning the taregt sequence to the database, we will create the xml file that can then be used in beast
-==> Use /dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/ParseXmlST.py
+Script:
+/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/bam2MTfasta.sh
 
-############################## ESTIMATE TIPS 
-4) Uisng the created xml, we can run the chains fro the tip dating analysis
-==> Use /dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/tip_dating_v2.sh
+Optional:
+You can extract additional statistics such as coverage, number of reads, and depth of coverage using:
+/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/getStatsMT.sh
 
-############################## COMBINE LOGS & TREES
-5) Then we can combine the logs & treefiles into -combined.logs
-==> Use /dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/combineLogsTrees.sh
+## 2️⃣ Alignment & Trimming
 
-############################## EXTRACT TIP AGES
-6) use this script to extract the tip ages from the logsfiles 
-==> use /dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/ExtractTipDate.sh
+Align your sample consensus sequence to the reference database of radiocarbon-dated samples (already aligned).
+
+Script:
+/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/runMafftTrimal.sh
+
+## 3️⃣ XML Creation for BEAST
+
+After alignment, generate the BEAST XML configuration file for tip dating.
+
+Script:
+/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/ParseXmlST.py
+
+## 4️⃣ Tip Date Estimation
+
+Run the BEAST analysis using the generated XML to estimate tip ages.
+
+Script:
+/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/tip_dating_v2.sh
+
+## 5️⃣ Combine Logs and Trees
+
+After BEAST runs are complete, combine all log and tree files into consolidated results.
+
+Script:
+/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/combineLogsTrees.sh
+
+## 6️⃣ Extract Tip Ages
+
+Finally, extract the estimated tip ages from the combined log files.
+
+Script:
+/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/ExtractTipDate.sh
