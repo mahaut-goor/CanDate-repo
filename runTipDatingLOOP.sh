@@ -32,6 +32,7 @@ runMCMC=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/runM
 bam2fasta=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/bam2fasta.sh
 runMafftTrimal=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/runMafftTrimal.sh
 parseXml=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/ParseXmlST.py
+extractDates=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/scripts/ExtractTipDate.sh
 
 ########################################## BAM to FASTA #########################################
 for bam in $INPUT_DIR"/"*".bam"; do
@@ -97,11 +98,13 @@ for xml in $XML_DIR"/"*".xml"; do
     source "$runMCMC" "$xml" "$INPUT_DIR" "$prefix" "new"
 
     echo "chains1 is : $chains/chain1_$prefix.log"
-    echo "output is : $INPUT_DIR/COMBINE_VF_$prefix.log"
+    echo "output is : $INPUT_DIR"/"$prefix"combined_log.log"
     
-    $logcombiner -b 10 -log $chains"/chain1_"$prefix".log" -log $chains"/chain2_"$prefix".log" -log $chains"/chain3_"$prefix".log" -log $chains"/chain4_"$prefix".log" -o $INPUT_DIR"/COMBINED_"$prefix".log"
+    $logcombiner -b 10 -log $chains"/chain1_"$prefix".log" -log $chains"/chain2_"$prefix".log" -log $chains"/chain3_"$prefix".log" -log $chains"/chain4_"$prefix".log" -o $INPUT_DIR"/"$prefix"combined_log.log"
 
 done
+
+source $extractDates "$INPUT_DIR"
 
 echo "----------------------------------------------------------------"
 echo "Finishing at: $(date)"

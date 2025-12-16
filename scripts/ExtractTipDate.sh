@@ -14,7 +14,7 @@
 # Usage: ./run_extract_tip_dates.sh <base_directory>
 
 # base_dir="${1:-.}"  # Default to current directory if none provided
-base_dir=/dss/lxclscratch/09/re98gan/205ancientsModern/leave-one-out/results/leave-one-out/done/to_combine
+base_dir=$1
 script_path="/dss/dsshome1/09/re98gan/ANALYSIS/py_scripts/extractTipDate.py"
 
 echo "Searching for *.log files in: $base_dir"
