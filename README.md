@@ -1,4 +1,4 @@
-# Molecular Age Estimation Pipeline
+# CanDate - Canis Ancient DNA Tip-dating Molecular Age Estimation Pipeline
 
 This directory contains all scripts and data used for the estimation of molecular age from mitochondrial sequences.
 
