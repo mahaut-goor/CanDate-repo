@@ -1,7 +1,0 @@
-https://trace.ncbi.nlm.nih.gov/Traces/sra-reads-be/fastq?acc=SRR13762354
-https://trace.ncbi.nlm.nih.gov/Traces/sra-reads-be/fastq?acc=SRR13762333
-https://trace.ncbi.nlm.nih.gov/Traces/sra-reads-be/fastq?acc=SRR13762336
-https://trace.ncbi.nlm.nih.gov/Traces/sra-reads-be/fastq?acc=SRR13762337
-https://trace.ncbi.nlm.nih.gov/Traces/sra-reads-be/fastq?acc=SRR13762339
-https://trace.ncbi.nlm.nih.gov/Traces/sra-reads-be/fastq?acc=SRR13762340
-https://trace.ncbi.nlm.nih.gov/Traces/sra-reads-be/fastq?acc=SRR13762344

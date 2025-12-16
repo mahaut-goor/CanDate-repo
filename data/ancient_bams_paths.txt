@@ -1,8 +1,0 @@
-/dss/dssfs02/pn29qe/pn29qe-dss-0000/ancient_dogs_bam/SNPcapture/PD01/AL2840_rmdup.bam
-/dss/dssfs02/pn29qe/pn29qe-dss-0000/ancient_dogs_bam/SNPcapture/PD01/AL2892_rmdup.bam
-/dss/dssfs02/pn29qe/pn29qe-dss-0000/ancient_dogs_bam/SNPcapture/PD01/AL2988_rmdup.bam
-/dss/dssfs02/pn29qe/pn29qe-dss-0000/ancient_dogs_bam/SNPcapture/PD01/AL2994_rmdup.bam
-/dss/dssfs02/pn29qe/pn29qe-dss-0000/ancient_dogs_bam/SNPcapture/PD01/AL2997_rmdup.bam
-/dss/dssfs02/pn29qe/pn29qe-dss-0000/ancient_dogs_bam/SNPcapture/PD01/AL3118_rmdup.bam
-/dss/dssfs02/pn29qe/pn29qe-dss-0000/ancient_dogs_bam/SNPcapture/PD01/AL3165_rmdup.bam
-/dss/dssfs02/pn29qe/pn29qe-dss-0000/ancient_dogs_bam/SNPcapture/PD01/OL4161_rmdup.bam
