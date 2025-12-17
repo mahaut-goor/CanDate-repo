@@ -13,19 +13,23 @@ input=$1          # XML file
 dir=$2
 prefix=$3
 type=$4           # new or resume
-threads=64
+threads=${SLURM_CPUS_PER_TASK:-16}
+nb_chains=$5
 
 ############################################# RUN BEAST MCMCs #############################################
-chains="$dir/chains"
-mkdir -p "$chains"
 
-for i in {1..4}; do # run 4 chains for each input
+for i in $(seq 1 $nb_chains); do 
     seed=$((30 - i))
 
+    echo "==============================================="
+    echo "Starting BEAST chain $i with seed $seed"
+    echo "Input file: $input"
+    echo "Output prefix: $dir/chain${i}_"
+
     if [ "$type" == "resume" ]; then # resume an existing run
-        $beast -threads $threads -prefix "$chains/chain${i}_" -resume "$input" &
+        $beast -threads $threads -prefix "$dir/chain${i}_" -resume "$input" &
     elif [ "$type" == "new" ]; then # start a new run
-        $beast -threads $threads -prefix "$chains/chain${i}_" "$input" &
+        $beast -threads $threads -prefix "$dir/chain${i}_" "$input" &
     else
         echo "❌ Error: unknown type '$type'. Expected 'resume' or 'new'."
         exit 1

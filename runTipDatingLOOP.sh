@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=chineseSamplesTD
-#SBATCH --output=/dss/dsshome1/09/re98gan/ANALYSIS/out/chineseSamplesTD_%j.out
-#SBATCH --error=/dss/dsshome1/09/re98gan/ANALYSIS/err/chineseSamplesTD_%j.err
+#SBATCH --job-name=7armenian
+#SBATCH --output=/dss/dsshome1/09/re98gan/ANALYSIS/out/7armenian_%j.out
+#SBATCH --error=/dss/dsshome1/09/re98gan/ANALYSIS/err/7armenian_%j.err
 #SBATCH --time=48:00:00
 #SBATCH --get-user-env
 #SBATCH --clusters=biohpc_gen
@@ -12,100 +12,105 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=M.Goor@campus.lmu.de
 
+set -euo pipefail
+
 #########################################
 #               INPUTS                  #
 #########################################
-INPUT_DIR=<path/to/your/folder>
-PREFIX=<your_sample_prefix>
-TYPE="new"  # new or resume
+INPUT_DIR=/dss/lxclscratch/09/re98gan/mt_dogs_to_date/7LachieSamples
+PREFIX="7armenian"
+TYPE="new"
+STEP=4 # STEP 1: BAM→FASTA, STEP 2: Run MAFFT+TRIMAL, STEP 3: Creat Xml, STEP 4: Run Beast MCMC, STEP 5: Extract Tip Dates
 
 #########################################
 #                  DIR                  #
 #########################################
-RES_DIR=$INPUT_DIR/results
-XML_DIR=$INPUT_DIR/xml_files/
+FASTA_DIR="$INPUT_DIR/fastas"
+ALIGN_DIR="$INPUT_DIR/mafft_trimal"
+XML_DIR="$INPUT_DIR/xml_files"
+CHAINS_DIR="$INPUT_DIR/chains"
+COMBINED_DIR="$INPUT_DIR/combined"
 
 #########################################
 #               SCRIPTS                 #
 #########################################
-runMCMC=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/runMCMCTipDating.sh
+runMCMC=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/scripts/runMCMC.sh
 bam2fasta=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/bam2fasta.sh
-runMafftTrimal=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/runMafftTrimal.sh
-parseXml=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/ParseXmlST.py
+runMafftTrimal=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/scripts/runMafftTrimal.sh
+parseXml=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/scripts/ParseXmlST.py
 extractDates=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/scripts/ExtractTipDate.sh
+combineLogsTrees=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/scripts/combineLogsTrees_v2.sh
 
-########################################## BAM to FASTA #########################################
-for bam in $INPUT_DIR"/"*".bam"; do
-    INPUT_BAM=$bam
-    INPUT_SAMPLE=$(basename ${bam%.bam})
-    mkdir -p $RES_DIR $XML_DIR
+echo "=================================================="
+echo " Starting pipeline at STEP ${STEP}"
+echo "=================================================="
 
-    echo "Processing BAM: $INPUT_BAM"
-    echo "Sample Name: $INPUT_SAMPLE"
-    echo "Results Directory: $RES_DIR"
+########################################## STEP 1: BAM → FASTA #########################################
+if [[ "$STEP" -le 1 ]]; then
+    mkdir -p "$FASTA_DIR"
+  for bam in "$INPUT_DIR"/*.bam; do
+      INPUT_SAMPLE=$(basename "${bam%.bam}")
+      echo "Processing BAM: $bam"
+      "$bam2fasta" "$bam" "$INPUT_SAMPLE" "$FASTA_DIR"
+  done
+else
+  echo "➡️ Skipping STEP 1"
+fi
 
-    source $bam2fasta "$INPUT_BAM" "$INPUT_SAMPLE" "$RES_DIR"
-done
+########################################## STEP 2: MAFFT + TRIMAL #########################################
+if [[ "$STEP" -le 2 ]]; then
+    mkdir -p "$ALIGN_DIR"
+  for fasta in "$FASTA_DIR"/*.fasta; do
+      "$runMafftTrimal" "$FASTA_DIR" "$fasta" "$ALIGN_DIR"
+  done
+else
+  echo "➡️ Skipping STEP 2"
+fi
 
-########################################## Mafft trimal #########################################
-for fasta in $INPUT_DIR/*.fasta; do
-  INPUT_FASTA=$fasta
-  source $runMafftTrimal $INPUT_DIR $INPUT_FASTA
-done
+########################################## STEP 3: XML #########################################
+if [[ "$STEP" -le 3 ]]; then
+    mkdir -p "$XML_DIR"
+  for alignment in "$ALIGN_DIR"/*_trimmed.fasta; do
+      prefix_fasta=$(basename "${alignment%.fasta}")
+      prefix=${prefix_fasta##*DBB_}
+      prefix=${prefix%_trimmed*}
+      python "$parseXml" "$XML_DIR/$prefix.xml" "$alignment" "$prefix" "$prefix_fasta"
+  done
+else
+  echo "➡️ Skipping STEP 3"
+fi
 
-# ######################################### Parse XMLs #########################################
-for alignment in $INPUT_FASTA"/"*"_trimmed.fasta"; do
-    prefix_fasta=$(basename ${alignment%.fasta})
-    echo "prefix fasta $prefix_fasta"
-    prefix=${prefix_fasta##*DBB_}
-	prefix=${prefix%_trimmed*}
-    echo "prefix sample $prefix"
-    new_xml=$XML_DIR/$prefix.xml
-    python $parseXml "$new_xml" "$alignment" "$prefix" "$prefix_fasta"
-done
+########################################## STEP 4: BEAST #########################################
+if [[ "$STEP" -le 4 ]]; then
+  mkdir -p "$CHAINS_DIR" "$COMBINED_DIR"
+  nb_chains=6
+
+  for xml in "$XML_DIR"/*.xml; do
+    echo "----------------------------------------"
+      prefix=$(basename "${xml%.xml}")
+      prefix=${prefix##*DBB_}
+      prefix=${prefix%_trimmed*}
 
 
-#########################################
-#       SUBMIT RESUME JOBS
-#########################################
+      echo "Running BEAST for $prefix"
+      echo "xml file: $xml"
+      echo "prefix: $prefix"
+      echo "chains dir: $CHAINS_DIR"
+      echo "combined dir: $COMBINED_DIR"
+      "$runMCMC" "$xml" "$CHAINS_DIR" "$prefix" "$TYPE" "$nb_chains"
+      "$combineLogsTrees" "$CHAINS_DIR" "$COMBINED_DIR" "$prefix" "$TYPE" "$nb_chains"
+  done
+else
+  echo "➡️ Skipping STEP 4"
+fi
+
+########################################## STEP 5: Tip dates #########################################
+if [[ "$STEP" -le 5 ]]; then
+  "$extractDates" "$COMBINED_DIR"
+else
+  echo "➡️ Skipping STEP 5"
+fi
+
 echo "----------------------------------------------------------------"
-echo "Starting at: $(date)"
-echo "----------------------------------------------------------------"
-
-module load slurm_setup
-eval "$(conda shell.bash hook)"
-conda activate /dss/dsshome1/09/re98gan/ANALYSIS/envs/beast_env #create and env for beast
-
-beast=/dss/dsshome1/09/re98gan/ANALYSIS/envs/beast_env/beast/bin/beast
-treeannotator=/dss/dsshome1/09/re98gan/ANALYSIS/envs/beast_env/beast/bin/treeannotator
-logcombiner=/dss/dsshome1/09/re98gan/ANALYSIS/envs/beast_env/beast/bin/logcombiner
-
-# echo "------------------------"
-# echo "Combining chains..."
-chains=$INPUT_DIR/chains
-
-echo "Submitting RESUME jobs..."
-for xml in $XML_DIR"/"*".xml"; do
-    prefix=$(basename ${xml%.xml})
-    prefix=${prefix##*DBB_}
-	prefix=${prefix%_trimmed*}
-    
-    echo "------------------------"
-    echo "Resuming $prefix"
-    echo "XML: $xml"
-    echo "------------------------"
-
-    source "$runMCMC" "$xml" "$INPUT_DIR" "$prefix" "new"
-
-    echo "chains1 is : $chains/chain1_$prefix.log"
-    echo "output is : $INPUT_DIR"/"$prefix"combined_log.log"
-    
-    $logcombiner -b 10 -log $chains"/chain1_"$prefix".log" -log $chains"/chain2_"$prefix".log" -log $chains"/chain3_"$prefix".log" -log $chains"/chain4_"$prefix".log" -o $INPUT_DIR"/"$prefix"combined_log.log"
-
-done
-
-source $extractDates "$INPUT_DIR"
-
-echo "----------------------------------------------------------------"
-echo "Finishing at: $(date)"
+echo "Finished at: $(date)"
 echo "----------------------------------------------------------------"

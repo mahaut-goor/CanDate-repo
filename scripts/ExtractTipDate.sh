@@ -1,21 +1,10 @@
 #!/bin/bash
-#SBATCH --job-name=extractTD
-#SBATCH --output=/dss/dsshome1/09/re98gan/ANALYSIS/out/extractTD_%j.out
-#SBATCH --error=/dss/dsshome1/09/re98gan/ANALYSIS/err/extractTD_%j.err
-#SBATCH --time=02:00:00
-#SBATCH --get-user-env
-#SBATCH --clusters=serial
-#SBATCH --partition=serial_std
-#SBATCH --cpus-per-task=16
-#SBATCH --export=NONE
-#SBATCH --mail-type=ALL
-#SBATCH --mail-user=M.Goor@campus.lmu.de
 
 # Usage: ./run_extract_tip_dates.sh <base_directory>
 
 # base_dir="${1:-.}"  # Default to current directory if none provided
 base_dir=$1
-script_path="/dss/dsshome1/09/re98gan/ANALYSIS/py_scripts/extractTipDate.py"
+script_path="/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/scripts/extractTipDate.py"
 
 echo "Searching for *.log files in: $base_dir"
 
