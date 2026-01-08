@@ -34,7 +34,7 @@ def parse_xml_tip_dates(
     # Extract the prefix used for the tipDatesSampler and taxonset IDs
     old_tip_id = "_".join(old_sample_id.split("_")[:-1])
     print(f"Old tip ID: {old_tip_id}")
-    new_tip_id = "_".join(new_sample_id.split("_")[:-1])
+    new_tip_id = [("_".join(new_sample_id.split("_")[:-1])) if "_" in new_sample_id else new_sample_id][0]
     print(f"New tip ID: {new_tip_id}")
 
     with open(input_xml, "r") as file:
@@ -106,7 +106,7 @@ if __name__ == "__main__":
 
     # The FASTA "old name" can be extracted from the old XML if needed.
     # For now, assume you know it explicitly:
-    input_xml = r"/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/data/DOG_DBB_D_Pinarbasi2_15837_final_trimmed_10MA.xml"
+    input_xml = r"/dss/dsshome1/09/re98gan/ANALYSIS/CanDate-repo/data/DOG_DBB_D_Pinarbasi2_15837_final_trimmed_10MA.xml"
     old_id = "D_Pinarbasi2_15837"
     fasta_old_name = "DOG_DBB_D_Pinarbasi2_15837_final_trimmed"
 

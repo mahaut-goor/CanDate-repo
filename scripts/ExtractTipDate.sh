@@ -4,13 +4,13 @@
 
 # base_dir="${1:-.}"  # Default to current directory if none provided
 base_dir=$1
-script_path="/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/scripts/extractTipDate.py"
+script_path="/dss/dsshome1/09/re98gan/ANALYSIS/CanDate-repo/scripts/extractTipDate.py"
 
 echo "Searching for *.log files in: $base_dir"
 
 # Loop through all *_combined_log.log files recursively
 # find "$base_dir" -type f -name "COMBINED*.log" | while read -r log; do
-find "$base_dir" -type f -name "*combined_log.log" | while read -r log; do
+find "$base_dir" -type f -name "*log.log" | while read -r log; do
     echo "Processing: $log"
     output_dir=$(dirname "$log")
     prefix=$(basename "$log" .log)

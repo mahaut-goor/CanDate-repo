@@ -20,7 +20,7 @@ set -euo pipefail
 INPUT_DIR=/dss/lxclscratch/09/re98gan/mt_dogs_to_date/7LachieSamples
 PREFIX="7armenian"
 TYPE="new"
-STEP=4 # STEP 1: BAM→FASTA, STEP 2: Run MAFFT+TRIMAL, STEP 3: Creat Xml, STEP 4: Run Beast MCMC, STEP 5: Extract Tip Dates
+STEP=3 # STEP 1: BAM→FASTA, STEP 2: Run MAFFT+TRIMAL, STEP 3: Creat Xml, STEP 4: Run Beast MCMC, STEP 5: Extract Tip Dates
 
 #########################################
 #                  DIR                  #
@@ -34,12 +34,13 @@ COMBINED_DIR="$INPUT_DIR/combined"
 #########################################
 #               SCRIPTS                 #
 #########################################
-runMCMC=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/scripts/runMCMC.sh
-bam2fasta=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/bam2fasta.sh
-runMafftTrimal=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/scripts/runMafftTrimal.sh
-parseXml=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/scripts/ParseXmlST.py
-extractDates=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/scripts/ExtractTipDate.sh
-combineLogsTrees=/dss/dsshome1/09/re98gan/ANALYSIS/tip_dating/bam2tipDating_pipeline/scripts/combineLogsTrees_v2.sh
+scripts_dir=/dss/dsshome1/09/re98gan/ANALYSIS/CanDate-repo/scripts
+runMCMC=$scripts_dir/runMCMC.sh
+bam2fasta=$scripts_dir/bam2fasta.sh
+runMafftTrimal=$scripts_dir/runMafftTrimal.sh
+parseXml=$scripts_dir/ParseXmlST.py
+extractDates=$scripts_dir/ExtractTipDate.sh
+combineLogsTrees=$scripts_dir/combineLogsTrees_v2.sh
 
 echo "=================================================="
 echo " Starting pipeline at STEP ${STEP}"
@@ -74,7 +75,12 @@ if [[ "$STEP" -le 3 ]]; then
       prefix_fasta=$(basename "${alignment%.fasta}")
       prefix=${prefix_fasta##*DBB_}
       prefix=${prefix%_trimmed*}
-      python "$parseXml" "$XML_DIR/$prefix.xml" "$alignment" "$prefix" "$prefix_fasta"
+      id_consensus=$(grep ">" $FASTA_DIR"/"*"$prefix"*".fasta" | head -n 1 | sed 's/>//')
+      echo "Creating XML for alignment: $alignment"
+      echo "Prefix: $prefix"
+      echo "Output FASTA prefix: $prefix_fasta"
+
+      python "$parseXml" "$XML_DIR/$prefix.xml" "$alignment" "$id_consensus" "$prefix_fasta"
   done
 else
   echo "➡️ Skipping STEP 3"
