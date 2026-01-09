@@ -10,7 +10,7 @@ echo "Searching for *.log files in: $base_dir"
 
 # Loop through all *_combined_log.log files recursively
 # find "$base_dir" -type f -name "COMBINED*.log" | while read -r log; do
-find "$base_dir" -type f -name "*log.log" | while read -r log; do
+find "$base_dir" -type f -name "*combined.log" | while read -r log; do
     echo "Processing: $log"
     output_dir=$(dirname "$log")
     prefix=$(basename "$log" .log)

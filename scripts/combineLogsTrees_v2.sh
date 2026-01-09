@@ -4,9 +4,10 @@
 #               INPUTS                  #
 #########################################
 dir=$1
-prefix=$2
-type=$3
-nb_chains=$4
+output_dir=$2
+prefix=$3
+type=$4
+nb_chains=$5
 
 #########################################
 #               LOAD ENV                #
@@ -21,13 +22,13 @@ conda activate /dss/dsshome1/09/re98gan/ANALYSIS/envs/beast_env \
 #########################################
 treeannotator=/dss/dsshome1/09/re98gan/ANALYSIS/envs/beast_env/beast/bin/treeannotator
 logcombiner=/dss/dsshome1/09/re98gan/ANALYSIS/envs/beast_env/beast/bin/logcombiner
-resample=/dss/dsshome1/09/re98gan/ANALYSIS/py_scripts/ResampleFromTrees.py
+resample=/dss/dsshome1/09/re98gan/ANALYSIS/CanDate-repo/scripts/ResampleFromTrees.py
 
-chains="$dir/chains"
-combined_log="$dir/${prefix}_combined.log"
-combined_trees="$dir/${prefix}_combined.trees"
-resampled_trees="$dir/${prefix}_resampled.trees"
-final_tree="$dir/${prefix}_resampled.tree"
+chains="$dir"
+combined_log="$output_dir/${prefix}_combined.log"
+combined_trees="$output_dir/${prefix}_combined.trees"
+resampled_trees="$output_dir/${prefix}_resampled.trees"
+final_tree="$output_dir/${prefix}_resampled.tree"
 
 #########################################
 #           COMBINE LOG FILES            #
@@ -48,7 +49,7 @@ done
 #########################################
 tree_args=()
 for i in $(seq 1 "$nb_chains"); do
-    treefile="$chains/chain${i}_${prefix}.trees"
+    treefile=${chains}"/chain"${i}*${prefix}*."trees"
     [[ -f "$treefile" ]] || { echo "❌ Missing $treefile"; exit 1; }
     tree_args+=(-log "$treefile")
 done

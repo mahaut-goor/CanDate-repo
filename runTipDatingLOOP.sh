@@ -88,7 +88,7 @@ fi
 
 ########################################## STEP 4: BEAST #########################################
 if [[ "$STEP" -le 4 ]]; then
-  mkdir -p "$CHAINS_DIR" "$COMBINED_DIR"
+  mkdir -p "$CHAINS_DIR"
   nb_chains=6
 
   for xml in "$XML_DIR"/*.xml; do
@@ -97,24 +97,40 @@ if [[ "$STEP" -le 4 ]]; then
       prefix=${prefix##*DBB_}
       prefix=${prefix%_trimmed*}
 
-
       echo "Running BEAST for $prefix"
       echo "xml file: $xml"
       echo "prefix: $prefix"
       echo "chains dir: $CHAINS_DIR"
-      echo "combined dir: $COMBINED_DIR"
       "$runMCMC" "$xml" "$CHAINS_DIR" "$prefix" "$TYPE" "$nb_chains"
-      "$combineLogsTrees" "$CHAINS_DIR" "$COMBINED_DIR" "$prefix" "$TYPE" "$nb_chains"
   done
 else
   echo "➡️ Skipping STEP 4"
 fi
 
-########################################## STEP 5: Tip dates #########################################
+########################################## STEP 5: Combine logs #########################################
 if [[ "$STEP" -le 5 ]]; then
-  "$extractDates" "$COMBINED_DIR"
+  mkdir -p "$COMBINED_DIR"
+  nb_chains=6
+
+  for xml in "$XML_DIR"/*.xml; do
+    echo "----------------------------------------"
+      prefix=$(basename "${xml%.xml}")
+      prefix=${prefix##*DBB_}
+      prefix=${prefix%_trimmed*}
+
+      echo "chains dir: $CHAINS_DIR"
+      echo "combined dir: $COMBINED_DIR"
+      "$combineLogsTrees" "$CHAINS_DIR" "$COMBINED_DIR" "$prefix" "$TYPE" "$nb_chains"
+  done
 else
   echo "➡️ Skipping STEP 5"
+fi
+
+########################################## STEP 6: Tip dates #########################################
+if [[ "$STEP" -le 6 ]]; then
+  "$extractDates" "$COMBINED_DIR"
+else
+  echo "➡️ Skipping STEP 6"
 fi
 
 echo "----------------------------------------------------------------"
