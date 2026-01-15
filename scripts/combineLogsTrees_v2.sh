@@ -6,8 +6,7 @@
 dir=$1
 output_dir=$2
 prefix=$3
-type=$4
-nb_chains=$5
+nb_chains=$4
 
 #########################################
 #               LOAD ENV                #
@@ -49,7 +48,7 @@ done
 #########################################
 tree_args=()
 for i in $(seq 1 "$nb_chains"); do
-    treefile=${chains}"/chain"${i}*${prefix}*."trees"
+    treefile=${chains}"/chain"${i}_${prefix}."trees"
     [[ -f "$treefile" ]] || { echo "❌ Missing $treefile"; exit 1; }
     tree_args+=(-log "$treefile")
 done
