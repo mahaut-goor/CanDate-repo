@@ -106,9 +106,9 @@ if __name__ == "__main__":
 
     # The FASTA "old name" can be extracted from the old XML if needed.
     # For now, assume you know it explicitly:
-    input_xml = r"/dss/dsshome1/09/re98gan/ANALYSIS/CanDate-repo/data/DOG_DBB_D_Pinarbasi2_15837_final_trimmed_10MA.xml"
-    old_id = "D_Pinarbasi2_15837"
-    fasta_old_name = "DOG_DBB_D_Pinarbasi2_15837_final_trimmed"
+    input_xml = r"/dss/dsshome1/09/re98gan/ANALYSIS/CanDate-repo/data/20seqexample/TEST_D_Croatia_SOTN01_20seq.xml"
+    old_id = "D_Croatia_SOTN01_47482"
+    fasta_old_name = "/dss/dsshome1/09/re98gan/ANALYSIS/CanDate-repo/data/20seqexample/17calC14_3moderns_lachie_renamed.fasta"
 
     parse_xml_tip_dates(
         input_xml,
