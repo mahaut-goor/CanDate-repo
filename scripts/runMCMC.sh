@@ -27,9 +27,9 @@ for i in $(seq 1 $nb_chains); do
     echo "Output prefix: $dir/chain${i}_"
 
     if [ "$type" == "resume" ]; then # resume an existing run
-        $beast -threads $threads -prefix "$dir/chain${i}_" -resume "$input" -beagle &
+        $beast -threads $threads -prefix "$dir/chain${i}_" -seed $seed -resume "$input" -beagle &
     elif [ "$type" == "new" ]; then # start a new run
-        $beast -threads $threads -prefix "$dir/chain${i}_" "$input" -beagle &
+        $beast -threads $threads -prefix "$dir/chain${i}_" -seed $seed "$input" -beagle &
     else
         echo "❌ Error: unknown type '$type'. Expected 'resume' or 'new'."
         exit 1
