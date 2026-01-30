@@ -7,6 +7,3 @@ module-whatis "Loads BWA and SAMtools from user install in /dss/dssfs03/u8401/u8
 
 # Add ~/tools to PATH
 prepend-path PATH /dss/dssfs02/pn29qe/pn29qe-dss-0000/workflows/nextflow/conda_env/beast_tip_dating/bin/
-
-
-#she needs to change the path to her conda env that she created thx to our yaml file

@@ -20,7 +20,7 @@
 mkdir -p res
 
 nextflow run ./popgen48-beast_tip_dating \
-    --input BAMsamples.csv \
+    --input ./exemple_files/BAMsamples.csv \
     --outdir ./res \
     --reference_xml ./data/181ancientModernNODLOOP_REFDUMMY_1M.xml \
     --existing_maln ./data/181ancientsModernNODLOOP.fasta \
