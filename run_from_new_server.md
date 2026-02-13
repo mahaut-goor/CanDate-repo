@@ -30,7 +30,7 @@ with the path of the conda env /bins you just created
 
 Modify this file ./popgen48-beast_tip_dating/conf/lrz_cm4.config
 
-Change the path to the module
+Change the path to the module above ./beast_tip_dating_module
    ```bash
    beforeScript = 'module load /dss/dssfs02/pn29qe/pn29qe-dss-0000/workflows/nextflow/modules/beast_tip_dating'
 ```

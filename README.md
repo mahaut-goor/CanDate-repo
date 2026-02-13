@@ -190,17 +190,41 @@ nextflow run ./CanDatePipeline \
   --skip_consensus true
   --skip_maln true
   ```
-* **Resume MCMC step:**
+* **Start from MCMC run :**
 
-The workflow automaticaly resumes the MC chains if the parameters from the combined.log have not all recahe ESS >200.
+If you wiThe workflow automaticaly resumes the MC chains if the parameters from the combined.log have not all recahe ESS >200.
 You can also choose to resume the BEAST step providing nextflow with the run updated xml.
 
-   ```
+  ```
   --skip_consensus true
   --skip_maln true
   --skip_parse_xml true
   ```
 
+* **Resume MCMC step:**
+
+If the workflow has finished, ie. combined.log have been created, but you wish to run the MCcghains longer, you may resume following those steps:
+
+First, use the python script *./suppli_script/beast_index.py*
+
+<python beast_index.py -o name_of_output_logs.csv --require-triplet ./path/to/your/working/folder/>
+
+Then, run the workflow using those options:
+
+   ```
+   nextflow run ./popgen48-beast_tip_dating/ \
+   --input input_file_xml.csv \
+   --skip_consensus true \
+   --outdir ./path/to/your/working/dir/ \
+   -profile lrz_cm4_custom \
+   --skip_maln true \
+   --skip_parse_xml true \
+   -ansi-log false \
+   --beast_rerun_file ./name_of_output_logs.csv \
+   --max_resume 20
+   ```
+
+< Note that the "sample" column in "name_of_output_logs.csv" must match the "sample" column in "input_file_xml.csv" (which is the csv with the samples_ids and their xml files)>
 
 ---
 
@@ -254,6 +278,11 @@ Example script path:
   Warn if consensus contains too many Ns (gaps).
 
   > “Consensus has too many gaps — consider increasing minimum depth or quality thresholds.”
+
+* Sharable on other servers
+* Beast version hardcoded in xml file
+* complete help on the different commands
+* add a checkup for the coverage (eg is under a threshold, print a warning)
 
 ---
 

@@ -8,7 +8,7 @@ process SAMTOOLS_VIEW {
         'biocontainers/samtools:1.22.1--h96c455f_0' }"
 
     input:
-    tuple val(meta), path(input), path(index)
+    tuple val(meta), path(input), path(index), val(mt_dna_header)
     tuple val(meta2), path(fasta)
     path qname
     val index_format
@@ -59,7 +59,7 @@ process SAMTOOLS_VIEW {
         $args \\
         -o ${output_file} \\
         $input \\
-        $args2
+        "${mt_dna_header}"
     """
 
     stub:

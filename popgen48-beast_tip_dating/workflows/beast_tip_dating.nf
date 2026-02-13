@@ -19,7 +19,9 @@ include { BEAST_MCMC            } from '../modules/local/beast/mcmc/main'
 include { BEAST_LOGCOMBINER ; BEAST_LOGCOMBINER as BEAST_LOGCOMBINER_TREES } from '../modules/local/beast/logcombiner/main'
 include { PYTHON_RESAMPLE_FROM_TREES } from '../modules/local/python/resample_from_trees/main'
 include { RSCRIPT_TRACERER } from '../modules/local/rscript/tracerer/main'
+include { PYTHON_GENERATE_MCMC_RESUME_CSV } from '../modules/local/python/generate_mcmc_resume_csv/main'
 include { BEAST_MCMC_RESUME } from '../modules/local/beast/mcmc_resume/main'
+include { PYTHON_EXTRACT_TIP_DATE } from '../modules/local/python/extract_tip_date/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -53,12 +55,26 @@ workflow BEAST_TIP_DATING {
         def_bam_idx = bam_split.no_idx.map{meta, bam->tuple(meta, bam[0], bam[1])}
 
         meta_bam_idx = si_bam_idx.mix(def_bam_idx)
+
+        if(params.mtdna_map_file){
+                Channel
+                        .fromPath(params.mtdna_map_file)
+                        .splitCsv(header:true,sep:",")
+                        .map{row ->
+                            tuple([id:row.sample],row.mt_header)
+                        }
+                        .set{meta_mtdnamap}
+                ch_samtools_view = meta_bam_idx.combine(meta_mtdnamap,by:0)
+            }
+        else{
+                ch_samtools_view = meta_bam_idx.combine([params.mt_seq_name])
+            }
         
         //
         //SAMTOOLS_VIEW
         //
         SAMTOOLS_VIEW(
-            meta_bam_idx.map{meta, bam, idx -> tuple([id:meta.id+"_mt"],bam,idx)},
+            ch_samtools_view.map{meta, bam, idx, mt -> tuple([id:meta.id+"_mt"],bam,idx, mt)},
             [[],[]],
             [],
             []
@@ -152,7 +168,7 @@ workflow BEAST_TIP_DATING {
 
     ch_beast_mcmc =  ch_beast_xml.combine(nb_chain)
 
-    if(!params.beast_rerun_file){
+    if(!params.beast_resume){
     //
     //BEAST_MCMC
     //
@@ -161,11 +177,37 @@ workflow BEAST_TIP_DATING {
         ch_beast_mcmc.map{meta, xml, idx -> idx},
         []
     )
+    ch_beast_logcombiner_log = BEAST_MCMC.out.logs.groupTuple()
+    ch_beastcombiner_trees = BEAST_MCMC.out.trees.groupTuple()
+    }
+    if(params.beast_resume){
+
+            //
+            //MODULE: PYTHON_GENERATE_MCMC_RESUME_CSV
+            //
+            PYTHON_GENERATE_MCMC_RESUME_CSV(
+                Channel.fromPath(params.outdir)
+            )
+            
+            ch_input_beast_rerun = PYTHON_GENERATE_MCMC_RESUME_CSV.out.csv
+                                   .splitCsv(header: true, sep: ',')
+                                    .map{row->tuple([id:row.sample],row.chain,row.run,row.state,row.log,row.tree)}
+
+            ch_beast_rerun = ch_beast_xml.combine(ch_input_beast_rerun,by:0)
+
+            //
+            //MODULE: BEAST_MCMC_RESUME
+            //
+            BEAST_MCMC_RESUME(
+                ch_beast_rerun
+            )
+        ch_beastcombiner_trees = BEAST_MCMC_RESUME.out.trees.groupTuple()
+        ch_beast_logcombiner_log = BEAST_MCMC_RESUME.out.logs.groupTuple()
+        }
 
     //
     //BEAST_LOGCOMBINER_LOG
     //
-    ch_beast_logcombiner_log = BEAST_MCMC.out.logs.groupTuple()
 
     BEAST_LOGCOMBINER(
         ch_beast_logcombiner_log,
@@ -183,7 +225,6 @@ workflow BEAST_TIP_DATING {
     //
     //BEAST_LOGCOMBINER_TREES
     //
-    ch_beastcombiner_trees = BEAST_MCMC.out.trees.groupTuple()
 
     BEAST_LOGCOMBINER_TREES(
         ch_beastcombiner_trees,
@@ -195,23 +236,14 @@ workflow BEAST_TIP_DATING {
     PYTHON_RESAMPLE_FROM_TREES(
         BEAST_LOGCOMBINER_TREES.out.logs
     )
-    }
 
-    if(params.beast_rerun_file){
-            ch_input_beast_rerun = Channel
-            .fromPath(params.beast_rerun_file)
-            .splitCsv(header: true, sep: ',')
-            .map{row->tuple([id:row.sample],row.chain,row.seed,row.state,row.log,row.tree)}
+    //
+    //MODULE: PYTHON_EXTRACT_TIP_DATE
+    //
+    PYTHON_EXTRACT_TIP_DATE(
+        BEAST_LOGCOMBINER.out.logs
+    )
 
-            ch_beast_rerun = ch_beast_xml.combine(ch_input_beast_rerun,by:0)
-
-            //
-            //MODULE: BEAST_MCMC_RESUME
-            //
-            BEAST_MCMC_RESUME(
-                ch_beast_rerun
-            )
-        }
     //
     // Collate and save software versions
     //

@@ -4,7 +4,7 @@ process BEAST_MCMC_RESUME {
 
 
     input:
-    tuple val(meta), path(xml), val(chain_index), val(seed), path(state_file), path(log_file), path(trees)
+    tuple val(meta), path(xml), val(chain_index), val(run), path(state_file), path(log_file), path(trees)
 
     output:
     tuple val(meta), path("${prefix}*.log")  , emit: logs
@@ -15,7 +15,8 @@ process BEAST_MCMC_RESUME {
     script:
     def args   = task.ext.args ?: ''
     sample = "${meta.id}"
-    prefix     = "resume_chain${chain_index}_${seed}_"
+    new_run = run.toInteger() + 1
+    prefix     = "chain${chain_index}_run${new_run}_${sample}"
     min_ess_nonbase    = params.min_ess_nonbasefreq
     min_ess_base    = params.min_ess_basefreq
     remove_burnins = params.remove_burnins
@@ -31,7 +32,7 @@ process BEAST_MCMC_RESUME {
     
     LOWEST_ESS=\$(Rscript ${baseDir}/bin/check_ess.r ${log_file} ${remove_burnins} ${sample_interval} ${min_ess_nonbase} ${min_ess_base} ${prefix})
 
-    cat ${state_file} > ${prefix}_${sample}.state
+    cat ${state_file} > ${prefix}.state
 
     # Loop until the threshold is met
     while (( \$(echo "\$LOWEST_ESS == 0" | bc -l) )); do
@@ -43,7 +44,7 @@ process BEAST_MCMC_RESUME {
         RETRY_COUNT=\$((RETRY_COUNT + 1))
 
         echo "ESS has not crossed the set threshold. Resuming BEAST for \${RETRY_COUNT} times..."
-        beast -resume -threads ${task.cpus} -prefix ${prefix} -statefile ${prefix}_${sample}.state -seed ${seed} -beagle ${args} $xml
+        beast -resume -threads ${task.cpus} -prefix ${prefix} -statefile ${prefix}.state -beagle ${args} $xml
         LOWEST_ESS=\$(Rscript ${baseDir}/bin/check_ess.r ${prefix}${xml.baseName}.log ${remove_burnins} ${sample_interval} ${min_ess_nonbase} ${min_ess_base} ${prefix})
     done
 

@@ -17,7 +17,7 @@ process BEAST_MCMC {
     script:
     def args   = task.ext.args ?: ''
     seed   = 33 - chain_index
-    prefix     = "chain${chain_index}_${seed}_"
+    prefix     = "chain${chain_index}_run1_"
     min_ess_nonbase    = params.min_ess_nonbasefreq
     min_ess_base    = params.min_ess_basefreq
     remove_burnins = params.remove_burnins
