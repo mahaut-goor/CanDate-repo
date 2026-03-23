@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/popgen48/beast_tip_dating/master/assets/schema_input.json",
+  "title": "popgen48/beast_tip_dating pipeline - params.input schema",
+  "description": "Schema for the file provided with params.input",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "sample": {
+        "type": "string",
+        "pattern": "^\\S+$",
+        "errorMessage": "Sample name must be provided and cannot contain spaces",
+        "meta": ["id"]
+      },
+      "bam": {
+        "type": "string",
+        "format": "file-path",
+        "exists": true,
+        "pattern": "bam$",
+        "errorMessage": "bam file containing reads aligned at least to mtDNA '.bam'"
+      },
+      "idx": {
+        "type": "string",
+        "pattern": "(bai$|none)",
+        "errorMessage": "index of the bam file provided"
+      },
+      "fasta": {
+        "type": "string",
+        "format": "file-path",
+        "exists": true,
+        "pattern": "fa(sta)?$",
+        "errorMessage": "FASTA file containing mtDNA sequence"
+      },
+      "xml_file": {
+        "type": "string",
+        "format": "file-path",
+        "exists": true,
+        "pattern": "xml?$",
+        "errorMessage": "beast input xml file"
+      }
+    },
+    "oneOf": [
+      {
+        "required": ["sample", "bam"]
+      },
+      {
+        "required": ["sample", "fasta"]
+      },
+      {
+        "required": ["sample", "xml_file"]
+      }
+    ]
+  }
+}
+

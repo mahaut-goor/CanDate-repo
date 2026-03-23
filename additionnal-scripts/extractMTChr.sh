@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# This script extracts the mitochondrial chromosome name from BAM files and saves it in a CSV file.
+# Usage: ./extractMTChr.sh /path/to/bam/files output.csv
+
 INPUT_DIR=$1
 INPUT_CSV=$2
 

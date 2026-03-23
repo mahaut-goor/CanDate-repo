@@ -1,6 +1,7 @@
 #!/bin/bash
 
-#!/usr/bin/env bash
+# This script prepares a CSV file listing BAM files and their corresponding index files for input into the CanDate pipeline.
+# Usage: ./prepare_input.sh /path/to/bam/files > output.csv
 
 # Exit if no directory argument is provided
 if [ $# -ne 1 ]; then
