@@ -1,9 +1,0 @@
-#%Module1.0
-proc ModulesHelp { } {
-    puts stderr "Sets up PATH for BWA and SAMtools from /dss/dssfs03/u8401/u8401-dss-0001/tools/bwa_samtools/bin/"
-}
-
-module-whatis "Loads BWA and SAMtools from user install in /dss/dssfs03/u8401/u8401-dss-0001/tools/bwa_samtools/bin/"
-
-# Add ~/tools to PATH
-prepend-path PATH /dss/dssfs02/pn29qe/pn29qe-dss-0000/workflows/nextflow/conda_env/beast_tip_dating/bin/

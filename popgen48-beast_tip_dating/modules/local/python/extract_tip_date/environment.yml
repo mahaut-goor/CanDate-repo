@@ -1,9 +1,0 @@
-name: extract_tip_date
-channels:
-  - conda-forge
-  - bioconda
-dependencies:
-  - python=3.9
-  - pandas=1.5.3
-  - numpy=1.23.5
-  - arviz=0.15.1
