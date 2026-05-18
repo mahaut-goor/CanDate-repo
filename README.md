@@ -62,14 +62,14 @@ Developed by:
    Default provided:
 
    ```bash
-   ./data/181ancientsModernNODLOOP.fasta
+   data/canids/181ancientsModernNODLOOP.fasta
    ```
 
 3. **XML template**
    Default BEAST XML template:
 
    ```bash
-   ./data/181ancientModernNODLOOP_REFDUMMY_1M.xml
+   data/canids/181ancientModernNODLOOP_REFDUMMY_1M.xml
    ```
 
 ---
