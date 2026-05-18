@@ -4,31 +4,18 @@
 
 ---
 
-## 🧬 Overview
-
-**CanDate** is a bioinformatic pipeline for estimating the **molecular age of ancient canid samples** using **Bayesian tip-dating** on their mitochondrial genomes.
-
-It processes mitochondrial **BAM** or **FASTA** files through the following stages:
-
-* **FASTA extraction**
-* **Multiple sequence alignment**
-* **XML generation**
-* **BEAST MCMC tip-dating analysis**
-* **Tip-date extraction**
-
-CanDate is implemented in the **Nextflow framework** (compatible with nf-core standards) and supports **modular resumption** — meaning you can restart the pipeline from any step.
-
----
-
 ## 👩‍🔬 Development Team
 
-Developed by **Mahaut Goor** & **Maulik Upadhyay**
-at the *Paleogenomics Lab of Prof. Laurent Frantz*
-
-With the help of:
-**Alberto Carmagnini** & **Lachie Scarsbrook**
+Developed by:
+* **Mahaut Goor** Chair of Animla System Genomics, LMU, Munich, Germany
+* **Maulik Upadhyay** Staatlichen Naturwissenschaftlichen Sammlungen Bayerns, Munich, Germany
 
 ---
+
+## 🧬 Overview
+
+**CanDate** is a bioinformatic pipeline for estimating the **molecular age of ancient samples** using **Bayesian tip-dating** on mitochondrial genomes.
+
 
 ## ⚙️ Pipeline Steps
 
@@ -74,17 +61,18 @@ With the help of:
 
 ## 🧬 Dependencies
 
-| Tool              | Version   | Notes                                                                   |
-| ----------------- | --------- | ----------------------------------------------------------------------- |
-| **Nextflow**      | ≥ 25.10.2 | [Install Nextflow](https://www.nextflow.io/docs/latest/getstarted.html) |
-| **Conda / Mamba** | Latest    | [Install Conda](https://docs.conda.io/en/latest/miniconda.html)         |
-| **Beast**         | v.2.7.8   | [Install Beast v.2.7.8](https://github.com/CompEvol/beast2/releases)    |
+CanDate is implemented in the **Nextflow framework** and supports **modular resumption** — meaning you can restart the pipeline from any step. We have included all the necessary tools inside a singularity container. In order to run the pipeline, you need to have nextflow installed as well as singularity.
+
+| Tool              | Version   | Notes                                                                                  |
+| ----------------- | --------- | ---------------------------------------------------------------------------------------|
+| **Nextflow**      | ≥ 25.10.2 | [Install Nextflow](https://www.nextflow.io/docs/latest/getstarted.html)                |
+| **singularity**   | Latest    | [Install Singularity](https://docs.sylabs.io/guides/3.0/user-guide/installation.html)  |
 
 ---
 
 ## 💻 Installation
 
-Will be available in the next weeks 
+
 
 ---
 
@@ -117,6 +105,10 @@ nextflow run ./candate_nf \
   --min_ess 100 
 ```
 
+## Runing for Canids
+
+## Running for new species
+
 
 ## 🧠 Notes
 
@@ -132,20 +124,12 @@ nextflow run ./candate_nf \
 
 ---
 
-## 🚧 Upcoming Features
-
-* Automatic filtering step after `samtools`:
-  Warn if consensus contains too many Ns (gaps).
-
-  > “Consensus has too many gaps — consider increasing minimum depth or quality thresholds.”
-
-* Sharable on other servers
-* add a checkup for the coverage (eg is under a threshold, print a warning)
-
----
-
 ## 📚 References
 
 * **Tip Dating & Leave-One-Out Method:** Loog *et al.*, 2020
 * **BEAST:** Bouckaert *et al.*, 2014
 * **nf-core Framework:** Ewels *et al.*, 2020
+* **mafft** Katoh *et al.* ,2013 Jan (10.1093/molbev/mst010)
+* **trimal** Capella-Gutiérrez *et al.*, 2009 (10.1093/bioinformatics/btp348)
+* **samtools** Danecek *et al.*, 2021 (https://doi.org/10.1093/gigascience/giab008)
+* **singularity** Kurtzer *et al*, (2017) (https://doi.org/10.1371/journal.pone.0177459)
