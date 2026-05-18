@@ -1,0 +1,46 @@
+repository_type: pipeline
+
+nf_core_version: 3.4.1
+
+lint:
+  files_unchanged:
+    - .github/CONTRIBUTING.md
+    - assets/sendmail_template.txt
+    - CODE_OF_CONDUCT.md
+    - assets/nf-core-beast_tip_dating_logo_light.png
+    - docs/images/nf-core-beast_tip_dating_logo_light.png
+    - docs/images/nf-core-beast_tip_dating_logo_dark.png
+    - .github/ISSUE_TEMPLATE/bug_report.yml
+    - .github/CONTRIBUTING.md
+    - .github/PULL_REQUEST_TEMPLATE.md
+    - assets/email_template.txt
+    - docs/README.md
+  nextflow_config:
+    - manifest.name
+    - manifest.homePage
+  multiqc_config: false
+  files_exist:
+    - assets/multiqc_config.yml
+    - CODE_OF_CONDUCT.md
+    - assets/nf-core-beast_tip_dating_logo_light.png
+    - docs/images/nf-core-beast_tip_dating_logo_light.png
+    - docs/images/nf-core-beast_tip_dating_logo_dark.png
+    - .github/ISSUE_TEMPLATE/config.yml
+    - .github/workflows/awstest.yml
+    - .github/workflows/awsfulltest.yml
+
+template:
+  org: popgen48
+  name: beast_tip_dating
+  description: implement the steps to date the tip using beast from either fasta files
+    or from bam files
+  author: Gaia32, BioInf2305
+  version: 1.0.0dev
+  force: true
+  outdir: .
+  skip_features:
+    - multiqc
+    - fastqc
+    - seqera_platform
+    - gpu
+  is_nfcore: false
